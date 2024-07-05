@@ -38,12 +38,12 @@ pub fn load_config(path: PathBuf) -> &'static Config {
     let default_config = Config {
         devices: vec![Device {
             name: None,
-            vendor_id: 0,
-            product_id: 0x0844,
+            vendor_id: 0x0,
+            product_id: 0x0,
             usage: None,
             usage_page: None,
         }],
-        layouts: vec!["en".to_string()],
+        layouts: vec!["en".to_string(), "ru".to_string()],
         reconnect_delay: None,
     };
 
