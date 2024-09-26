@@ -8,13 +8,23 @@ mod data_type;
 mod keyboard;
 mod providers;
 
+use std::path::PathBuf;
+
 use std::thread;
 use tokio::sync::{broadcast, mpsc};
 use config::get_config;
 use keyboard::Keyboard;
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+struct Args {
+    /// Path to the configuration file
+    #[arg(short, long)]
+    config: Option<PathBuf>,
+}
+
 #[cfg(not(target_os = "macos"))]
 use providers::{_base::Provider, layout::LayoutProvider, time::TimeProvider, media::MediaProvider, volume::VolumeProvider};
-
 
 #[cfg(target_os = "macos")]
 use {
@@ -76,7 +86,8 @@ fn main() {
         .from_env_lossy();
     let tracing_subscriber = tracing_subscriber::fmt().with_env_filter(env_filter).finish();
     let _ = tracing::subscriber::set_global_default(tracing_subscriber);
-    let config = get_config();
+    let args = Args::parse();
+    let config = get_config(args.config);
 
     let keyboard = Keyboard::new(config.device, config.reconnect_delay);
     let (connected_sender, data_sender) = keyboard.connect();
