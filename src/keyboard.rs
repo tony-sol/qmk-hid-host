@@ -70,7 +70,9 @@ impl Keyboard {
                             }
                             Err(err) => tracing::error!("{}", err)
                         }
-
+                        std::thread::sleep(std::time::Duration::from_millis(reconnect_delay));
+                    }
+                    loop {
                         match device_info.open_device(&hid_api) {
                             Ok(device) => {
                                 start_read(&name, device, &is_connected, &device_to_host_sender);
@@ -79,7 +81,7 @@ impl Keyboard {
                             Err(err) => tracing::error!("{}", err)
                         }
 
-                        std::thread::sleep(std::time::Duration::from_millis(1000));
+                        std::thread::sleep(std::time::Duration::from_millis(reconnect_delay));
                     }
 
                     tracing::info!("{}: connected", name);
